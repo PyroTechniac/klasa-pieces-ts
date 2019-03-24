@@ -18,5 +18,5 @@ jobs:
         displayName: 'Install Node.js'
       - script: yarn
         displayName: 'Install Dependencies'
-      - script: 'yarn build'
-        displayName: 'Test Build'
+      - script: 'yarn test:lint'
+        displayName: 'Lint Repo'
