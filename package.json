@@ -2,7 +2,7 @@
 	"name": "klasa-pieces",
 	"description": "This repository contains the various *Pieces* submitted by users and collaborators.",
 	"scripts": {
-		"test:lint": "yarn tslint '*.ts' && yarn eslint --config .eslintrcmd.json --ext md guides && yarn markdownlint guides README.md",
+		"test:lint": "yarn tslint '*.ts' && yarn markdownlint guides README.md",
     "build": "yarn tsc"
 	},
 	"repository": {
