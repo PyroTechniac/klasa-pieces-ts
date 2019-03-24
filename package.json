@@ -3,7 +3,7 @@
 	"description": "This repository contains the various *Pieces* submitted by users and collaborators.",
 	"scripts": {
 		"test:lint": "yarn tslint '*.ts' && yarn markdownlint guides README.md",
-    "build": "yarn tsc"
+		"build": "yarn tsc"
 	},
 	"repository": {
 		"type": "git",
@@ -14,6 +14,9 @@
 	"devDependencies": {
 		"@kcp/lint": "github:KlasaCommunityPlugins/lint-files",
 		"@types/node": "^11.11.6",
+		"discord.js": "github:discordjs/discord.js",
+		"klasa": "github:dirigeants/klasa",
+		"markdownlint": "^0.12.0",
 		"tslint": "^5.14.0",
 		"typescript": "^3.3.4000"
 	}
