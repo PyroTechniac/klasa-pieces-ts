@@ -24,7 +24,7 @@ const rebootKeys = ['message', 'timestamp'].map((key) => `restart.${key}`);
 export default class RebootCommand extends Command {
 
 	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
-		super(client, store, file, dir , {
+		super(client, store, file, dir, {
 			description: (language) => language.get('COMMAND_REBOOT_DESCRIPTION'),
 			guarded: true,
 			permissionLevel: 10,
