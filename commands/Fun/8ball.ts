@@ -1,23 +1,23 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
+import { Command, CommandStore, KlasaClient, KlasaMessage } from 'klasa';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			aliases: ['8', 'magic', '8ball', 'mirror'],
 			description: 'Magic 8-Ball, does exactly what the toy does.',
-			usage: '<query:str>'
+			usage: '<query:str>',
 		});
 	}
 
-	run(msg, [question]) {
-		return msg.reply(question.endsWith('?') ?
+	run(message: KlasaMessage, [question]: [string]) {
+		return message.send(question.endsWith('?') ?
 			`🎱 ${answers[Math.floor(Math.random() * answers.length)]}` :
 			"🎱 That doesn't look like a question, try again please.");
 	}
 
-};
+}
 
 const answers = [
 	'Maybe.',
@@ -43,5 +43,5 @@ const answers = [
 	'Possibly.',
 	'Never, ever, ever.',
 	'There is a small chance.',
-	'Yes!'
+	'Yes!',
 ];
