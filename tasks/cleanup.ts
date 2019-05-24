@@ -1,33 +1,26 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Task, Colors } = require('klasa');
-const { util: { binaryToID } } = require('discord.js');
+import { Task, Colors } from 'klasa';
+import { SnowflakeUtil } from 'discord.js';
 
 // THRESHOLD equals to 30 minutes in milliseconds:
 //     - 1000 milliseconds = 1 second
 //     - 60 seconds        = 1 minute
 //     - 30 minutes
-const THRESHOLD = 1000 * 60 * 30,
-	EPOCH = 1420070400000,
-	EMPTY = '0000100000000000000000';
+const THRESHOLD = 1000 * 60 * 30;
 
-module.exports = class MemorySweeper extends Task {
+export default class MemorySweeper extends Task {
+	// The colors to stylise the console's logs
+	private readonly colors = {
+		red: new Colors({ text: 'lightred' }),
+		yellow: new Colors({ text: 'lightyellow' }),
+		green: new Colors({ text: 'green' })
+	};
 
-	constructor(...args) {
-		super(...args);
-
-		// The colors to stylise the console's logs
-		this.colors = {
-			red: new Colors({ text: 'lightred' }),
-			yellow: new Colors({ text: 'lightyellow' }),
-			green: new Colors({ text: 'green' })
-		};
-
-		// The header with the console colors
-		this.header = new Colors({ text: 'lightblue' }).format('[CACHE CLEANUP]');
-	}
+	// The header with the console colors
+	private readonly header = new Colors({ text: 'lightblue' }).format('[CACHE CLEANUP]');
 
 	async run() {
-		const OLD_SNOWFLAKE = binaryToID(((Date.now() - THRESHOLD) - EPOCH).toString(2).padStart(42, '0') + EMPTY);
+		const OLD_SNOWFLAKE = SnowflakeUtil.generate(Date.now() - THRESHOLD);
 		let presences = 0, guildMembers = 0, voiceStates = 0, emojis = 0, lastMessages = 0, users = 0;
 
 		// Per-Guild sweeper
@@ -36,10 +29,6 @@ module.exports = class MemorySweeper extends Task {
 			presences += guild.presences.size;
 			guild.presences.clear();
 
-			// Clear Voice States
-			voiceStates += guild.voiceStates.size;
-			guild.voiceStates.clear();
-
 			// Clear members that haven't send a message in the last 30 minutes
 			const { me } = guild;
 			for (const [id, member] of guild.members) {
@@ -47,6 +36,10 @@ module.exports = class MemorySweeper extends Task {
 				if (member.voice.channelID) continue;
 				if (member.lastMessageID && member.lastMessageID > OLD_SNOWFLAKE) continue;
 				guildMembers++;
+				voiceStates++;
+				// TODO: Ignore this because the typings dont exist on D.JS. PR has been sent remove when merged
+				// @ts-ignore
+				guild.voiceStates.delete(id);
 				guild.members.delete(id);
 			}
 
@@ -57,7 +50,9 @@ module.exports = class MemorySweeper extends Task {
 
 		// Per-Channel sweeper
 		for (const channel of this.client.channels.values()) {
+			// @ts-ignore
 			if (!channel.lastMessageID) continue;
+			// @ts-ignore
 			channel.lastMessageID = null;
 			lastMessages++;
 		}
@@ -72,12 +67,12 @@ module.exports = class MemorySweeper extends Task {
 		// Emit a log
 		this.client.emit('verbose',
 			`${this.header} ${
-				this.setColor(presences)} [Presence]s | ${
-				this.setColor(guildMembers)} [GuildMember]s | ${
-				this.setColor(voiceStates)} [VoiceState]s | ${
-				this.setColor(users)} [User]s | ${
-				this.setColor(emojis)} [Emoji]s | ${
-				this.setColor(lastMessages)} [Last Message]s.`);
+			this.setColor(presences)} [Presence]s | ${
+			this.setColor(guildMembers)} [GuildMember]s | ${
+			this.setColor(voiceStates)} [VoiceState]s | ${
+			this.setColor(users)} [User]s | ${
+			this.setColor(emojis)} [Emoji]s | ${
+			this.setColor(lastMessages)} [Last Message]s.`);
 	}
 
 	/**
@@ -89,7 +84,7 @@ module.exports = class MemorySweeper extends Task {
 	 * @param {number} number The number to colourise
 	 * @returns {string}
 	 */
-	setColor(number) {
+	setColor(number: number) {
 		const text = String(number).padStart(5, ' ');
 		// Light Red color
 		if (number > 1000) return this.colors.red.format(text);
