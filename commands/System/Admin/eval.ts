@@ -1,12 +1,30 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command, Stopwatch, Type, util } = require('klasa');
-const { inspect } = require('util');
-const fetch = require('node-fetch');
+// tslint:disable:no-eval
+import { Command, CommandStore, Stopwatch, Type, util, KlasaClient, KlasaMessage } from 'klasa';
+import { inspect } from 'util';
+import fetch from 'node-fetch';
 
-module.exports = class extends Command {
+interface IEvalResult {
+  success: boolean;
+  result: Error | string;
+  time: string;
+  type: string | Type;
+}
 
-	constructor(...args) {
-		super(...args, {
+interface IHandleMessageOptions {
+	success: boolean;
+	result: any;
+	time: string;
+	footer: string;
+	language: string;
+}
+
+export default class extends Command {
+
+	private timeout = 3000;
+
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			aliases: ['ev'],
 			description: (language) => language.get('COMMAND_EVAL_DESCRIPTION'),
 			extendedHelp: (language) => language.get('COMMAND_EVAL_EXTENDED'),
@@ -14,17 +32,15 @@ module.exports = class extends Command {
 			permissionLevel: 10,
 			usage: '<expression:str>'
 		});
-
-		this.timeout = 30000;
 	}
 
-	async run(msg, [code]) {
+	async run(msg: KlasaMessage, [code]:[string]) {
 		const flagTime = 'no-timeout' in msg.flags ? 'wait' in msg.flags ? Number(msg.flags.wait) : this.timeout : Infinity;
 		const language = msg.flags.lang || msg.flags.language || (msg.flags.json ? 'json' : 'js');
 		const { success, result, time, type } = await this.timedEval(msg, code, flagTime);
 
 		if (msg.flags.silent) {
-			if (!success && result && result.stack) this.client.emit('error', result.stack);
+			if (!success && result && (result as Error).stack) this.client.emit('error', (result as Error).stack);
 			return null;
 		}
 
@@ -33,7 +49,8 @@ module.exports = class extends Command {
 		return this.handleMessage(msg, { sendAs, hastebinUnavailable: false, url: null }, { success, result, time, footer, language });
 	}
 
-	async handleMessage(msg, options, { success, result, time, footer, language }) {
+
+	async handleMessage(msg: KlasaMessage, options: any, { success, result, time, footer, language }: IHandleMessageOptions): Promise<KlasaMessage | KlasaMessage[] | null> {
 		switch (options.sendAs) {
 			case 'file': {
 				if (msg.channel.attachable) return msg.channel.sendFile(Buffer.from(result), 'output.txt', msg.language.get('COMMAND_EVAL_OUTPUT_FILE', time, footer));
@@ -66,7 +83,7 @@ module.exports = class extends Command {
 		}
 	}
 
-	async getTypeOutput(msg, options) {
+	async getTypeOutput(msg: KlasaMessage, options: { hastebinUnavailable: boolean, sendAs: string }) {
 		const _options = ['log'];
 		if (msg.channel.attachable) _options.push('file');
 		if (!options.hastebinUnavailable) _options.push('hastebin');
@@ -77,7 +94,7 @@ module.exports = class extends Command {
 		options.sendAs = _choice.content;
 	}
 
-	timedEval(msg, code, flagTime) {
+	timedEval(msg: KlasaMessage, code: string, flagTime: number) {
 		if (flagTime === Infinity || flagTime === 0) return this.eval(msg, code);
 		return Promise.race([
 			util.sleep(flagTime).then(() => ({
@@ -91,7 +108,7 @@ module.exports = class extends Command {
 	}
 
 	// Eval the input
-	async eval(msg, code) {
+	async eval(msg: KlasaMessage, code: string): Promise<IEvalResult> {
 		const stopwatch = new Stopwatch();
 		let success, syncTime, asyncTime, result;
 		let thenable = false;
@@ -123,17 +140,17 @@ module.exports = class extends Command {
 				showHidden: Boolean(msg.flags.showHidden)
 			});
 		}
-		return { success, type, time: this.formatTime(syncTime, asyncTime), result: util.clean(result) };
+		return { success, type, time: this.formatTime(syncTime, asyncTime), result: util.clean(result!) };
 	}
 
-	formatTime(syncTime, asyncTime) {
+	formatTime(syncTime: string, asyncTime?: string) {
 		return asyncTime ? `⏱ ${asyncTime}<${syncTime}>` : `⏱ ${syncTime}`;
 	}
 
-	async getHaste(evalResult, language) {
+	async getHaste(evalResult: string, language: string) {
 		const key = await fetch('https://hastebin.com/documents', { method: 'POST', body: evalResult })
-			.then(response => response.json())
-			.then(body => body.key);
+			.then((response) => response.json())
+			.then((body)=> body.key);
 		return `https://hastebin.com/${key}.${language}`;
 	}
 
