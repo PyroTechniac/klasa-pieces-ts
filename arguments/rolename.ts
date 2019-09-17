@@ -12,9 +12,14 @@ function resolveRole(query: Role | string, guild: Guild) {
 
 module.exports = class extends Argument {
 
+<<<<<<< HEAD:arguments/rolename.ts
 	async run(arg: string, possible: Possible, msg: KlasaMessage): Promise<Role> {
 		// @ts-ignore
 		if (!msg.guild) return this.role(arg, possible, msg);
+=======
+	async run(arg, possible, msg) {
+		if (!msg.guild) return this.store.get('role').run(arg, possible, msg);
+>>>>>>> 8b23897da0db7378a36a32df9d2d8ef831be5e95:arguments/rolename.js
 		const resRole = resolveRole(arg, msg.guild);
 		if (resRole) return resRole;
 
@@ -34,9 +39,15 @@ module.exports = class extends Argument {
 		switch (querySearch.length) {
 			case 0: throw `${possible.name} Must be a valid name, id or role mention`;
 			case 1: return querySearch[0];
+<<<<<<< HEAD:arguments/rolename.ts
 			default: 
 				if (querySearch[0].name.toLowerCase() === arg.toLowerCase()) return querySearch[0];
 				throw `Found multiple matches: \`${querySearch.map((role) => role.name).join('`, `')}\``;
+=======
+			default:
+				if (querySearch[0].name.toLowerCase() === arg.toLowerCase()) return querySearch[0];
+				throw `Found multiple matches: \`${querySearch.map(role => role.name).join('`, `')}\``;
+>>>>>>> 8b23897da0db7378a36a32df9d2d8ef831be5e95:arguments/rolename.js
 		}
 	}
 
