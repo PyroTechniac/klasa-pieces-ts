@@ -1,7 +1,6 @@
-import { Language, LanguageStore, KlasaClient, util } from "klasa";
+import { Language, LanguageStore, KlasaClient, util, KlasaMessage } from "klasa";
 
 export default class extends Language {
-
 	constructor(client: KlasaClient, store: LanguageStore, file: string[], dir: string) {
 		super(client, store, file, dir);
 		this.language = {
@@ -68,7 +67,7 @@ export default class extends Language {
 				usersAdded.length ? `**Пользователи добавлены**\n${util.codeBlock('', usersAdded.join(', '))}` : '',
 				usersRemoved.length ? `**Пользователи удалены**\n${util.codeBlock('', usersRemoved.join(', '))}` : '',
 				guildsAdded.length ? `**Серверы добавлены**\n${util.codeBlock('', guildsAdded.join(', '))}` : '',
-				guildsRemoved.length ? `**Серверы удалены**\n${util.codeBlock('', guildsRemoved.join(', '))}` : ''
+				guildsRemoved.length ? `**Серверы удалены**\n${util.codeBlock('', guildsRemoved.join(', '))}` : '',
 			].filter((val) => val !== '').join('\n'),
 			COMMAND_EVAL_DESCRIPTION: 'Выполняет произвольный JavaScript. Зарезервировано для владельца бота.',
 			COMMAND_EVAL_EXTENDEDHELP: [
@@ -78,7 +77,7 @@ export default class extends Language {
 				'Флаг --depth принимает число, например, --depth=2, которое задаёт глубину результата для util.inspect.',
 				'Флаг --async оборачивает код в асинхронную функцию, благодаря чему вы сможете использовать await, но вам также придётся использовать return, чтобы вернуть результат.',
 				'Флаг --showHidden включает параметр showHidden в util.inspect.',
-				'Если результат слишком большой, он будет отправлен в виде файла или выведен в консоль, если бот не имеет разрешения на отправку файлов.'
+				'Если результат слишком большой, он будет отправлен в виде файла или выведен в консоль, если бот не имеет разрешения на отправку файлов.',
 			].join('\n'),
 			COMMAND_EVAL_ERROR: (time, output, type) => `**Ошибка**:${output}\n**Тип**:${type}\n${time}`,
 			COMMAND_EVAL_OUTPUT: (time, output, type) => `**Результат**:${output}\n**Тип**:${type}\n${time}`,
@@ -111,9 +110,9 @@ export default class extends Language {
 				util.codeBlock('', [
 					'Ссылка выше создана из учёта минимального набора разрешений, необходимого для работы всех команд бота на данный момент.',
 					'Не все разрешения подходят для всех серверов, поэтому не бойтесь убирать галочки.',
-					'Если вы попытаетесь использовать команду, которая требует больше разрешений, чем есть у бота, он даст вам знать.'
+					'Если вы попытаетесь использовать команду, которая требует больше разрешений, чем есть у бота, он даст вам знать.',
 				].join(' ')),
-				'Пожалуйста, создайте issue на <https://github.com/dirigeants/klasa>, если найдёте какие-либо ошибки.'
+				'Пожалуйста, создайте issue на <https://github.com/dirigeants/klasa>, если найдёте какие-либо ошибки.',
 			],
 			COMMAND_INVITE_DESCRIPTION: 'Отображает ссылку для добавления бота на сервер',
 			COMMAND_INFO: [
@@ -133,7 +132,7 @@ export default class extends Language {
 				'• ⏲ "Tasks", которые могут быть запланированы для выполнения в будущем с возможностью повтора',
 				'',
 				'Мы надеемся быть на 100% настраиваемым фреймворком, который бы устраивал всех разработчиков. Мы часто выпускаем обновления и исправляем ошибки по мере возможности.',
-				'Если вы заинтересованы, вы можете найти нас на https://klasa.js.org'
+				'Если вы заинтересованы, вы можете найти нас на https://klasa.js.org',
 			],
 			COMMAND_INFO_DESCRIPTION: 'Предоставляет информацию о боте.',
 			COMMAND_HELP_DESCRIPTION: 'Отображает список доступных вам команд или справку о конкретной команде.',
@@ -160,7 +159,8 @@ export default class extends Language {
 			COMMAND_CONF_SERVER: (key, list) => `**Настройки сервера${key}**\n${list}`,
 			COMMAND_CONF_USER_DESCRIPTION: 'Определяет настройки пользователя.',
 			COMMAND_CONF_USER: (key, list) => `**Настройки пользователя${key}**\n${list}`,
-			COMMAND_STATS: (memUsage, uptime, users, guilds, channels, klasaVersion, discordVersion, processVersion, message) => [
+			// Message has an explicit type because otherwise eslint thinks it's not a number
+			COMMAND_STATS: (memUsage, uptime, users, guilds, channels, klasaVersion, discordVersion, processVersion, message: KlasaMessage) => [
 				'= СТАТИСТИКА =',
 				'',
 				`• Использование памяти :: ${memUsage} МБ`,
@@ -171,11 +171,11 @@ export default class extends Language {
 				`• Klasa                :: v${klasaVersion}`,
 				`• Discord.js           :: v${discordVersion}`,
 				`• Node.js              :: ${processVersion}`,
-				`• Shard                :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${this.client.options.totalShardCount}`
+				`• Shard                :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${this.client.options.totalShardCount}`,
 			],
 			COMMAND_STATS_DESCRIPTION: 'Отображает статистику бота.',
 			MESSAGE_PROMPT_TIMEOUT: 'Время запроса истекло.',
-			TEXT_PROMPT_ABORT_OPTIONS: ['отмена']
+			TEXT_PROMPT_ABORT_OPTIONS: ['отмена'],
 		};
 	}
 
@@ -184,13 +184,11 @@ export default class extends Language {
 	}
 
 	pluralize(num: number, s0: string, s1: string, s2: string) {
-		if (num % 10 === 1 && num % 100 !== 11) {
+		if (num % 10 === 1 && num % 100 !== 11)
 			return s0;
-		} else if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20)) {
+		if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20))
 			return s1;
-		} else {
-			return s2;
-		}
-	}
 
-};
+		return s2;
+	}
+}
