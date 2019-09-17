@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
+
 const { Task, Colors } = require('klasa');
 const { SnowflakeUtil } = require('discord.js');
 
