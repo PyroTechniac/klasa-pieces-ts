@@ -9,11 +9,7 @@ export default class extends Monitor {
 		super(client, store, file, dir, {
 			enabled: true,
 			ignoreSelf: true,
-<<<<<<< HEAD:monitors/invitedetection.ts
-			name: 'invitedetection',
-=======
 			ignoreOthers: false
->>>>>>> 8b23897da0db7378a36a32df9d2d8ef831be5e95:monitors/invitedetection.js
 		});
 	}
 
