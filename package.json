@@ -21,7 +21,6 @@
 		"chokidar": "^3.1.0",
 		"discord.js": "github:discordjs/discord.js",
 		"eslint": "^6.4.0",
-		"eslint-config-klasa": "dirigeants/klasa-lint",
 		"klasa": "github:dirigeants/klasa",
 		"rethinkdb-ts": "^2.4.0-rc.16",
 		"typescript": "^3.3.4000"
