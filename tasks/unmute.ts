@@ -1,4 +1,4 @@
-import { Task } from "klasa";
+import { Task } from 'klasa';
 
 /*
  *

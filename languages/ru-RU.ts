@@ -1,4 +1,4 @@
-import { Language, LanguageStore, KlasaClient, util, KlasaMessage } from "klasa";
+import { Language, LanguageStore, KlasaClient, util, KlasaMessage } from 'klasa';
 
 export default class extends Language {
 	constructor(client: KlasaClient, store: LanguageStore, file: string[], dir: string) {
@@ -116,7 +116,7 @@ export default class extends Language {
 			],
 			COMMAND_INVITE_DESCRIPTION: 'Отображает ссылку для добавления бота на сервер',
 			COMMAND_INFO: [
-				"Klasa это 'plug-and-play' фреймворк, работающий поверх библиотеки Discord.js.",
+				'Klasa это \'plug-and-play\' фреймворк, работающий поверх библиотеки Discord.js.',
 				'Большая часть кода разделена на модули, что позволяет разработчикам изменять Klasa под свои нужды.',
 				'',
 				'Некоторые особенности Klasa:',

@@ -2,7 +2,7 @@
 const { Task, Stopwatch } = require('klasa');
 const { watch } = require('chokidar');
 const { extname, basename, sep } = require('path');
-
+// This piece hasn't been converted as I am unsure of the best possible way to do this.
 const nodeModules = `${sep}node_modules${sep}`;
 
 /*
