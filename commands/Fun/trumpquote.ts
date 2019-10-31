@@ -1,14 +1,12 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
-const fetch = require('node-fetch');
+import { Command, KlasaMessage } from 'klasa';
+import fetch from 'node-fetch';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, { description: 'Returns a random Donald Trump quote.' });
-	}
+	description = 'Returns a random Donald Trump quote.';
 
-	async run(msg) {
+	async run(msg: KlasaMessage) {
 		const quote = await fetch('https://api.tronalddump.io/random/quote')
 			.then(response => response.json())
 			.then(body => body.value)
@@ -16,4 +14,4 @@ module.exports = class extends Command {
 		return msg.sendMessage(quote);
 	}
 
-};
+}

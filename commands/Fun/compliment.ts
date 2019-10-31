@@ -1,20 +1,20 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
+import { KlasaClient, KlasaMessage, Command, CommandStore } from 'klasa';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			description: 'Compliments a user.',
 			usage: '[UserToCompliment:member]'
 		});
 	}
 
-	run(msg, [mentioned = msg.member]) {
-		return msg.sendMessage(`${mentioned.user.tag}: ${compliments[Math.floor(Math.random() * compliments.length)]}`);
+	run(msg: KlasaMessage, [mentioned = msg.member]) {
+		return msg.sendMessage(`${mentioned!.user.tag}: ${compliments[Math.floor(Math.random() * compliments.length)]}`);
 	}
 
-};
+}
 
 const compliments = [
 	'Your smile is contagious.',

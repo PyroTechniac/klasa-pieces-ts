@@ -1,14 +1,14 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
-const jimp = require('jimp');
+// Needs fetchImage extendable
+import { KlasaMessage, Command } from 'klasa';
+import jimp from 'jimp';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, { description: 'Makes a big version of an image.' });
-	}
+	description = 'Makes a big version of an image.';
 
-	async run(msg) {
+	async run(msg: KlasaMessage) {
+		// @ts-ignore
 		const { url } = await msg.channel.fetchImage();
 		const img = await jimp.read(url);
 		img.resize(400, jimp.AUTO);
@@ -21,6 +21,7 @@ module.exports = class extends Command {
 					resolve(msg.channel.sendFile(buffer, 'image.png')));
 			});
 		}
+		return null;
 	}
 
-};
+}
