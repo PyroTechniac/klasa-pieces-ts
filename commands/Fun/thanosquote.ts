@@ -10,7 +10,7 @@ export default class extends Command {
 		return msg.send(quotes[Math.floor(Math.random() * quotes.length)]);
 	}
 
-};
+}
 
 const quotes = [
 	'The end is near.',
