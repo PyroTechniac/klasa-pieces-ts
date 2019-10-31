@@ -1,14 +1,14 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command, util: { toTitleCase } } = require('klasa');
-const { MessageEmbed } = require('discord.js');
-const fetch = require('node-fetch');
+import { Command, KlasaClient, CommandStore, KlasaMessage, util } from "klasa";
+import { MessageEmbed } from 'discord.js';
+import fetch from 'node-fetch';
 
 const ZWS = '\u200B';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			aliases: ['ud', 'urbandictionary'],
 			requiredPermissions: ['EMBED_LINKS'],
 			description: 'Searches the Urban Dictionary library for a definition to the search term.',
@@ -18,7 +18,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(msg, [query, ind = 1]) {
+	async run(msg: KlasaMessage, [query, ind = 1]: [string, number]) {
 		const index = ind - 1;
 		if (index < 0) {
 			throw 'The number cannot be zero or negative.';
@@ -36,9 +36,8 @@ module.exports = class extends Command {
 
 		const definition = this.content(result.definition, result.permalink);
 		return msg.sendEmbed(new MessageEmbed()
-			.setTitle(`Word: ${toTitleCase(query)}`)
+			.setTitle(`Word: ${util.toTitleCase(query)}`)
 			.setURL(result.permalink)
-			.setColor(msg.color)
 			.setThumbnail('http://i.imgur.com/CcIZZsa.png')
 			.setDescription([
 				`→ \`Definition\` :: ${ind}/${list.length}\n${definition}`,
@@ -50,23 +49,23 @@ module.exports = class extends Command {
 			.setFooter('© Urban Dictionary'));
 	}
 
-	content(definition, permalink) {
+	content(definition: string, permalink: string) {
 		if (definition.length < 750) return definition;
 		return `${this.cutText(definition, 750)}... [continue reading](${permalink})`;
 	}
 
-	cutText(str, length) {
+	cutText(str: string, length: number) {
 		if (str.length < length) return str;
 		const cut = this.splitText(str, length - 3);
 		if (cut.length < length - 3) return `${cut}...`;
 		return `${cut.slice(0, length - 3)}...`;
 	}
 
-	splitText(str, length, char = ' ') {
+	splitText(str: string, length: number, char = ' ') {
 		// eslint-disable-next-line id-length
 		const x = str.substring(0, length).lastIndexOf(char);
 		const pos = x === -1 ? length : x;
 		return str.substring(0, pos);
 	}
 
-};
+}

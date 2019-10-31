@@ -1,10 +1,10 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
+import { KlasaClient, KlasaMessage, Command, CommandStore } from 'klasa';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			aliases: ['choose', 'decide'],
 			description: 'Makes a decision for you given some choices.',
 			usage: '<choices:str> [...]',
@@ -12,10 +12,11 @@ module.exports = class extends Command {
 		});
 	}
 
-	run(msg, choices) {
-		return msg.reply(choices.length === 1 ?
+	async run(msg: KlasaMessage, choices: [string[]]) {
+		msg.reply(choices.length === 1 ?
 			'You only gave me one choice, dummy.' :
 			`I think you should go with "${choices[Math.floor(Math.random() * choices.length)]}"`);
+		return null;
 	}
 
-};
+}

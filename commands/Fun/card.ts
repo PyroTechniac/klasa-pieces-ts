@@ -1,18 +1,18 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
+import { KlasaClient, KlasaMessage, Command, CommandStore } from 'klasa';
 const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 const suits = ['♠️', '♦', '♥️', '♠️'];
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			description: 'Draws some random cards from a deck.',
 			usage: '<num:int{1,10}>'
 		});
 	}
 
-	run(msg, [numCards]) {
+	run(msg: KlasaMessage, [numCards]: [number]) {
 		const lines = [];
 
 		for (let i = 0; i < numCards; ++i) {
@@ -22,4 +22,4 @@ module.exports = class extends Command {
 		return msg.sendMessage(lines.join(', '));
 	}
 
-};
+}

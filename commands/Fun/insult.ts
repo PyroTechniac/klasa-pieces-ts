@@ -1,18 +1,18 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
-const roll = type => type[Math.floor(Math.random() * type.length)];
+import { KlasaClient, KlasaMessage, KlasaUser, Command, CommandStore } from 'klasa';
+const roll = (type: string[]) => type[Math.floor(Math.random() * type.length)];
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			description: 'Insults who you mention.',
 			usage: '<user:mention>',
 			nsfw: true
 		});
 	}
 
-	run(msg, [user]) {
+	run(msg: KlasaMessage, [user]: [KlasaUser]) {
 		return msg.sendMessage(`${user}, you know what? you're nothing but ${roll(start)} ${roll(middle)} ${roll(end)}.`);
 	}
 
