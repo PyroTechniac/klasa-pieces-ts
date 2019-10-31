@@ -20,6 +20,7 @@
 		"@types/node-fetch": "^2.3.6",
 		"@typescript-eslint/eslint-plugin": "^2.3.0",
 		"@typescript-eslint/parser": "^2.3.0",
+		"confusables": "^0.3.1",
 		"discord.js": "github:discordjs/discord.js",
 		"eslint": "^6.4.0",
 		"klasa": "github:dirigeants/klasa",

@@ -1,17 +1,17 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Command } = require('klasa');
-const { obfuscate } = require('confusables');
+import { KlasaClient, KlasaMessage, Command, CommandStore } from 'klasa';
+import { obfuscate } from 'confusables';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
+		super(client, store, file, dir, {
 			usage: '<str:str{1,200}>',
 			description: 'Modify a string to have confusing letters in it.'
 		});
 	}
 
-	async run(msg, [str]) {
+	async run(msg: KlasaMessage, [str]: [string]) {
 		const variations = [];
 
 		for (let i = 0; i < 5; i++) {
@@ -21,4 +21,4 @@ module.exports = class extends Command {
 		return msg.send(variations.join('\n'));
 	}
 
-};
+}
