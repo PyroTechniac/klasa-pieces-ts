@@ -1,13 +1,13 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { Route } = require('klasa-dashboard-hooks');
+import { DashboardClient, KlasaIncomingMessage, Route, RouteStore } from 'klasa-dashboard-hooks';
+import { ServerResponse } from 'http';
 
-module.exports = class extends Route {
-
-	constructor(...args) {
-		super(...args, { route: 'pieces/:type/:name' });
+export default class extends Route {
+	constructor(client: DashboardClient, store: RouteStore, file: string[], dir: string) {
+		super(client, store, file, dir, { route: 'pieces/:type/:name' });
 	}
 
-	get(request, response) {
+	get(request: KlasaIncomingMessage, response: ServerResponse) {
 		const { type, name } = request.params;
 		const store = this.client.pieceStores.get(type);
 		if (!store) response.end('[]');
@@ -16,5 +16,4 @@ module.exports = class extends Route {
 		if (!piece) return response.end('{}');
 		return response.end(JSON.stringify(piece));
 	}
-
-};
+}
